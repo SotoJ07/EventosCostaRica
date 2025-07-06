@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "Eventos Costa Rica - Home";
+    var isAuthenticated = User.Identity.IsAuthenticated;
+    var isAdmin = User.IsInRole("Admin");
+}
+
+<div class="container-fluid p-0">
+    <!-- Welcome Section -->
+    <header class="bg-info text-white text-center py-5">
+        <div class="container">
+            <h1 class="display-4 mb-4">¡Bienvenido a Eventos Costa Rica!</h1>
+            <div id="eventCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="/imagenes/EventosCostaRicaLogo.png" class="carousel-img-fixed" alt="Eventos Costa Rica Logo">
+                        </div>
+                    <div class="carousel-item">
+                        <img src="/imagenes/EventoConciertoKarolG.png" class="carousel-img-fixed" alt="Concierto Karol G">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/imagenes/EventoConciertoRock.png" class="carousel-img-fixed" alt="Concierto Rock">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/imagenes/EventoConciertoYoga.png" class="carousel-img-fixed" alt="Evento Yoga">
+                    </div>
+                </div>
+            </div>
+            <p class="lead mt-4">Su lugar para TODO en eventos!</p>
+        </div>
+    </header>
+
+   <!-- Featured Events -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-4">Tours</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card shadow-lg border-light mb-4">
+                        <img src="/imagenes/CorcovadoTours.png" class="card-img-top" alt="Aventura en Corcovado">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Aventura en Corcovado</h5>
+                            <p class="card-text">Julio 20 | 7:00 PM | OSA</p>
+                            <a href="#" class="btn btn-primary">Comprar Tour</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-lg border-light mb-4">
+                        <img src="/imagenes/LaFortunaTours.png" class="card-img-top" alt="Aventura en La Fortuna">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Romance en La Fortuna</h5>
+                            <p class="card-text">Julio 25 | 7:30 AM | La Fortuna</p>
+                            <a href="#" class="btn btn-primary">Comprar Tour</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-lg border-light mb-4">
+                        <img src="/imagenes/CaribeTours.png" class="card-img-top" alt="Relax en el Caribe">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Relax en el caribe</h5>
+                            <p class="card-text">Julio 30 | 7:00 AM | Gandoca</p>
+                            <a href="#" class="btn btn-primary">Comprar Tour</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel (only for Admins) -->
+    @if (isAuthenticated && isAdmin)
+    {
+        <section class="py-5 bg-light">
+            <div class="container">
+                <h2 class="text-center mb-4">Admin Panel</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card shadow-lg border-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Manage Events</h5>
+                                <p class="card-text">Create, edit, or remove movie events.</p>
+                                <a href="@Url.Action("ManageEvents", "Admin")" class="btn btn-info text-white">Go to Events</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card shadow-lg border-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Sales Reports</h5>
+                                <p class="card-text">View ticket sales and analytics.</p>
+                                <a href="@Url.Action("SalesReports", "Admin")" class="btn btn-info text-white">View Reports</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card shadow-lg border-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">User Management</h5>
+                                <p class="card-text">Manage user roles and permissions.</p>
+                                <a href="@Url.Action("Seguridad", "Home")" class="btn btn-info text-white">Manage Users</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

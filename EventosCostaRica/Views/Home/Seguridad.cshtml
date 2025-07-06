@@ -1,0 +1,22 @@
+﻿@model IEnumerable<EventosCostaRica.Models.Usuario>  
+@{  
+    ViewData["Title"] = "Seguridad y Acceso";  
+    var filtroActual = Context.Request.Query["filtro"].ToString();  
+    var total = Model?.Count() ?? 0;  
+    var admins = Model?.Count(u => u.Rol?.Nombre == "Admin") ?? 0;  
+    var guests = Model?.Count(u => u.Rol?.Nombre == "Guest") ?? 0;  
+}  
+
+<div class="container mt-5">  
+
+    <!-- Encabezado -->  
+    <div class="text-center bg-info text-white py-4 rounded shadow-sm mb-4">  
+        <h2 class="fw-bold">Módulo de Seguridad y Acceso</h2>  
+        <p>Gestiona los usuarios del sistema: creación, edición y eliminación.</p>  
+    </div>  
+
+    <!-- Resumen General -->  
+    <h4 class="text-center mb-3 fw-bold">Resumen General</h4>  
+    <div class="row text-center mb-4">  
+        <div class="col-md-4">  
+            <div class="bg-primary
