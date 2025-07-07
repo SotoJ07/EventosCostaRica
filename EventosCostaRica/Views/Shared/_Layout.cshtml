@@ -38,11 +38,11 @@
                                     <li><a class="dropdown-item" href="@Url.Action("MisEntradas", "Entradas")">Mis Entradas</a></li>
                                     @if (rolUsuario == "Admin")
                                     {
-                                        <li><a class="dropdown-item" href="@Url.Action("GestionEventos", "Admin")">Gestión de Eventos</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Eventos", "Index")">Gestión de Eventos</a></li>
                                         <li><a class="dropdown-item" href="@Url.Action("Ventas", "Admin")">Ventas</a></li>
                                         <li><a class="dropdown-item" href="@Url.Action("Reportes", "Admin")">Reportes</a></li>
                                         <li><a class="dropdown-item" href="@Url.Action("Seguridad", "Home")">Seguridad y Usuarios</a></li>
-                                    }
+                                    }s
                                 </ul>
                             </li>
                         }

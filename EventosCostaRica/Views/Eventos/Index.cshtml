@@ -1,0 +1,39 @@
+﻿@model List<EventosCostaRica.Models.Evento>
+
+<h2 class="mb-3">Eventos registrados</h2>
+
+<a class="btn btn-primary mb-3" asp-action="Crear">Agregar Evento</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Fecha</th>
+            <th>Lugar</th>
+            <th>Precio</th>
+            <th>Imagen</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var evento in Model)
+        {
+            <tr>
+                <td>@evento.Nombre</td>
+                <td>@evento.FechaInicio.ToShortDateString() - @evento.FechaFin.ToShortDateString()</td>
+                <td>@evento.Lugar</td>
+                <td>₡@evento.Precio.ToString("N2")</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(evento.ImagenUrl))
+                    {
+                        <img src="@evento.ImagenUrl" alt="Imagen Evento" width="100" />
+                    }
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-warning" asp-action="Editar" asp-route-id="@evento.Id">Editar</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Eliminar" asp-route-id="@evento.Id">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
