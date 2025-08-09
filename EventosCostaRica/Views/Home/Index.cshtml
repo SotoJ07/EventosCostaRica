@@ -5,7 +5,7 @@
     var isAuthenticated = User.Identity.IsAuthenticated;
     var isAdmin = User.IsInRole("Admin");
 }
-
+<link rel="stylesheet" href="~/css/home-styles.css" />
 <div class="container-fluid p-0">
     <!-- Modern Hero Section with Gradient -->
     <header class="position-relative overflow-hidden">
@@ -23,9 +23,6 @@
                     <div class="d-flex gap-3 animate-fade-in-delay-2">
                         <a href="#tours" class="btn btn-primary btn-lg px-4 py-3 rounded-pill shadow-lg">
                             <i class="fas fa-map-marked-alt me-2"></i>Explorar Tours
-                        </a>
-                        <a href="#eventos" class="btn btn-outline-light btn-lg px-4 py-3 rounded-pill">
-                            <i class="fas fa-calendar-alt me-2"></i>Ver Eventos
                         </a>
                     </div>
                 </div>
@@ -124,6 +121,9 @@
     </section>
 
     <!-- Featured Tours Section -->
+    @model List<EventosCostaRica.Models.Evento>
+
+    <!-- Featured Tours Section -->
     <section id="tours" class="py-5 bg-light">
         <div class="container">
             <div class="text-center mb-5">
@@ -132,142 +132,149 @@
                 <div class="divider mx-auto"></div>
             </div>
             <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-lg h-100 card-hover">
-                        <div class="position-relative overflow-hidden">
-                            <img src="/imagenes/CorcovadoTours.png" class="card-img-top" alt="Aventura en Corcovado">
-                            <div class="card-overlay">
-                                <span class="badge bg-success position-absolute top-0 start-0 m-3">
-                                    <i class="fas fa-leaf me-1"></i>Eco-Tour
-                                </span>
-                                <div class="card-overlay-content">
-                                    <a href="#" class="btn btn-light btn-sm rounded-pill">
-                                        <i class="fas fa-eye me-1"></i>Ver más
-                                    </a>
+                @foreach (var evento in Model)
+                {
+                    var disponible = evento.Capacidad > 0;
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card border-0 shadow-lg h-100 card-hover">
+                            <div class="position-relative overflow-hidden">
+                                @if (!string.IsNullOrEmpty(evento.ImagenUrl))
+                                {
+                                    <img src="@evento.ImagenUrl" class="card-img-top" alt="@evento.Nombre">
+                                }
+                                else
+                                {
+                                    <img src="/imagenes/default-tour.png" class="card-img-top" alt="@evento.Nombre">
+                                }
+                                <div class="card-overlay">
+                                    @{
+                                        string badgeClass = "bg-primary";
+                                        string badgeIcon = "fas fa-map-marker-alt";
+                                        string badgeText = "Tour";
+
+                                        // Lógica para determinar el tipo de badge basado en el lugar o nombre
+                                        if (evento.Lugar.Contains("Corcovado") || evento.Lugar.Contains("OSA"))
+                                        {
+                                            badgeClass = "bg-success";
+                                            badgeIcon = "fas fa-leaf";
+                                            badgeText = "Eco-Tour";
+                                        }
+                                        else if (evento.Lugar.Contains("La Fortuna") || evento.Lugar.Contains("Arenal"))
+                                        {
+                                            badgeClass = "bg-danger";
+                                            badgeIcon = "fas fa-heart";
+                                            badgeText = "Romance";
+                                        }
+                                        else if (evento.Lugar.Contains("Caribe") || evento.Lugar.Contains("Gandoca") || evento.Lugar.Contains("Puerto Viejo"))
+                                        {
+                                            badgeClass = "bg-info";
+                                            badgeIcon = "fas fa-umbrella-beach";
+                                            badgeText = "Relax";
+                                        }
+                                        else if (evento.Lugar.Contains("Playa") || evento.Lugar.Contains("Beach"))
+                                        {
+                                            badgeClass = "bg-info";
+                                            badgeIcon = "fas fa-umbrella-beach";
+                                            badgeText = "Playa";
+                                        }
+                                        else if (evento.Lugar.Contains("Volcán") || evento.Lugar.Contains("Volcano"))
+                                        {
+                                            badgeClass = "bg-warning";
+                                            badgeIcon = "fas fa-mountain";
+                                            badgeText = "Aventura";
+                                        }
+                                    }
+                                    <span class="badge @badgeClass position-absolute top-0 start-0 m-3">
+                                        <i class="@badgeIcon me-1"></i>@badgeText
+                                    </span>
+                                    
+                                    <div class="card-overlay-content">
+                                        <a href="@Url.Action("Catalogo", "Eventos", new { eventoId = evento.Id })" class="btn btn-light btn-sm rounded-pill">
+                                            <i class="fas fa-eye me-1"></i>Ver más
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-body p-4">
-                            <h5 class="card-title fw-bold mb-3">Aventura en Corcovado</h5>
-                            <div class="d-flex align-items-center mb-3 text-muted">
-                                <i class="fas fa-calendar me-2"></i>
-                                <span class="me-3">Julio 20</span>
-                                <i class="fas fa-clock me-2"></i>
-                                <span class="me-3">7:00 PM</span>
-                                <i class="fas fa-map-marker-alt me-2"></i>
-                                <span>OSA</span>
-                            </div>
-                            <p class="card-text text-muted">Explora la biodiversidad única del Parque Nacional Corcovado</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="rating">
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <small class="text-muted ms-1">(4.9)</small>
+                            <div class="card-body p-4">
+                                <h5 class="card-title fw-bold mb-3">@evento.Nombre</h5>
+                                <div class="d-flex align-items-center mb-3 text-muted">
+                                    <i class="fas fa-calendar me-2"></i>
+                                    <span class="me-3">@evento.FechaInicio.ToString("MMM dd")</span>
+                                    <i class="fas fa-clock me-2"></i>
+                                    <span class="me-3">@evento.FechaInicio.ToString("h:mm tt")</span>
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    <span>@evento.Lugar</span>
                                 </div>
-                                <span class="h5 text-primary fw-bold mb-0">$150</span>
+                                @if (!string.IsNullOrEmpty(evento.Descripcion))
+                                {
+                                    <p class="card-text text-muted">@evento.Descripcion</p>
+                                }
+                                else
+                                {
+                                    <p class="card-text text-muted">Disfruta de una experiencia única en @evento.Lugar</p>
+                                }
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="rating">
+                                        @{
+                                            // Generar rating aleatorio basado en el ID del evento para consistencia
+                                            Random rand = new Random(evento.Id);
+                                            double rating = 4.5 + (rand.NextDouble() * 0.5); // Rating entre 4.5 y 5.0
+                                            int fullStars = (int)Math.Floor(rating);
+                                            bool hasHalfStar = (rating - fullStars) >= 0.5;
+                                        }
+
+                                        @for (int i = 0; i < fullStars; i++)
+                                        {
+                                            <i class="fas fa-star text-warning"></i>
+                                        }
+
+                                        @if (hasHalfStar)
+                                        {
+                                            <i class="fas fa-star-half-alt text-warning"></i>
+                                        }
+
+                                        @for (int i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++)
+                                        {
+                                            <i class="far fa-star text-warning"></i>
+                                        }
+
+                                        <small class="text-muted ms-1">(@rating.ToString("F1"))</small>
+                                    </div>
+                                    <span class="h5 text-primary fw-bold mb-0">₡@evento.Precio.ToString("N0")</span>
+                                </div>
+
+                                <div class="mt-3">
+                                    @if (!disponible)
+                                    {
+                                        <span class="availability-badge sold-out">
+                                            <i class="fas fa-times-circle me-1"></i>Entradas Agotadas
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="availability-badge available">
+                                            <i class="fas fa-check-circle me-1"></i>Entradas Disponibles
+                                        </span>
+                                    }
+                                </div>
+                                
                             </div>
-                        </div>
-                        <div class="card-footer bg-white border-0 p-4 pt-0">
-                            <a href="#" class="btn btn-primary w-100 rounded-pill">
-                                <i class="fas fa-shopping-cart me-2"></i>Comprar Tour
-                            </a>
+                            <div class="card-footer bg-white border-0 p-4 pt-0">
+                                <a href="@Url.Action("Catalogo", "Eventos", new { eventoId = evento.Id })" class="btn btn-primary">Comprar</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-lg h-100 card-hover">
-                        <div class="position-relative overflow-hidden">
-                            <img src="/imagenes/LaFortunaTours.png" class="card-img-top" alt="Romance en La Fortuna">
-                            <div class="card-overlay">
-                                <span class="badge bg-danger position-absolute top-0 start-0 m-3">
-                                    <i class="fas fa-heart me-1"></i>Romance
-                                </span>
-                                <div class="card-overlay-content">
-                                    <a href="#" class="btn btn-light btn-sm rounded-pill">
-                                        <i class="fas fa-eye me-1"></i>Ver más
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body p-4">
-                            <h5 class="card-title fw-bold mb-3">Romance en La Fortuna</h5>
-                            <div class="d-flex align-items-center mb-3 text-muted">
-                                <i class="fas fa-calendar me-2"></i>
-                                <span class="me-3">Julio 25</span>
-                                <i class="fas fa-clock me-2"></i>
-                                <span class="me-3">7:30 AM</span>
-                                <i class="fas fa-map-marker-alt me-2"></i>
-                                <span>La Fortuna</span>
-                            </div>
-                            <p class="card-text text-muted">Una experiencia romántica con vista al Volcán Arenal</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="rating">
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <small class="text-muted ms-1">(4.8)</small>
-                                </div>
-                                <span class="h5 text-primary fw-bold mb-0">$200</span>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-white border-0 p-4 pt-0">
-                            <a href="#" class="btn btn-primary w-100 rounded-pill">
-                                <i class="fas fa-shopping-cart me-2"></i>Comprar Tour
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-lg h-100 card-hover">
-                        <div class="position-relative overflow-hidden">
-                            <img src="/imagenes/CaribeTours.png" class="card-img-top" alt="Relax en el Caribe">
-                            <div class="card-overlay">
-                                <span class="badge bg-info position-absolute top-0 start-0 m-3">
-                                    <i class="fas fa-umbrella-beach me-1"></i>Relax
-                                </span>
-                                <div class="card-overlay-content">
-                                    <a href="#" class="btn btn-light btn-sm rounded-pill">
-                                        <i class="fas fa-eye me-1"></i>Ver más
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body p-4">
-                            <h5 class="card-title fw-bold mb-3">Relax en el Caribe</h5>
-                            <div class="d-flex align-items-center mb-3 text-muted">
-                                <i class="fas fa-calendar me-2"></i>
-                                <span class="me-3">Julio 30</span>
-                                <i class="fas fa-clock me-2"></i>
-                                <span class="me-3">7:00 AM</span>
-                                <i class="fas fa-map-marker-alt me-2"></i>
-                                <span>Gandoca</span>
-                            </div>
-                            <p class="card-text text-muted">Disfruta de las playas paradisíacas del Caribe costarricense</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="rating">
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <small class="text-muted ms-1">(5.0)</small>
-                                </div>
-                                <span class="h5 text-primary fw-bold mb-0">$120</span>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-white border-0 p-4 pt-0">
-                            <a href="#" class="btn btn-primary w-100 rounded-pill">
-                                <i class="fas fa-shopping-cart me-2"></i>Comprar Tour
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No hay tours disponibles</h4>
+                    <p class="text-muted">Pronto tendremos nuevas experiencias para ti</p>
+                </div>
+            }
         </div>
     </section>
 
