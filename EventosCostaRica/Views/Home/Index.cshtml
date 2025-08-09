@@ -1,4 +1,6 @@
 ﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
     ViewData["Title"] = "Eventos Costa Rica - Home";
     var isAuthenticated = User.Identity.IsAuthenticated;
     var isAdmin = User.IsInRole("Admin");

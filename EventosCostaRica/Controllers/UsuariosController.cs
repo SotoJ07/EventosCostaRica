@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using EventosCostaRica.Models;
+using EventosCostaRica.Helpers;
 
 namespace EventosCostaRica.Controllers
 {
@@ -14,14 +15,21 @@ namespace EventosCostaRica.Controllers
             _context = context;
         }
 
-        public IActionResult Index(string filtro)
+        public async Task<IActionResult> Index()
         {
-            return RedirectToAction("Seguridad", "Home", new { filtro });
+            var usuarios = await _context.Usuarios
+                .Include(u => u.Rol)
+                .ToListAsync();
+            return View(usuarios);
         }
 
         public IActionResult Create()
         {
             ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Nombre");
+            ViewData["Estados"] = new SelectList(new[] {
+                new { Value = true, Text = "Activo" },
+                new { Value = false, Text = "Inactivo" }
+            }, "Value", "Text");
             return View();
         }
 
@@ -32,14 +40,16 @@ namespace EventosCostaRica.Controllers
             if (ModelState.IsValid)
             {
                 usuario.FechaRegistro = DateTime.Now;
-                usuario.Estado = true;
-                usuario.ContraseñaHash = usuario.ContraseñaHash; // Reemplazar con hashing real si aplica
+                usuario.ContraseñaHash = SeguridadHelper.HashPassword(usuario.ContraseñaHash);
                 _context.Add(usuario);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Seguridad", "Home");
+                return RedirectToAction(nameof(Index));
             }
-
             ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Nombre", usuario.RolId);
+            ViewData["Estados"] = new SelectList(new[] {
+                new { Value = true, Text = "Activo" },
+                new { Value = false, Text = "Inactivo" }
+            }, "Value", "Text", usuario.Estado);
             return View(usuario);
         }
 
@@ -49,12 +59,16 @@ namespace EventosCostaRica.Controllers
             if (usuario == null) return NotFound();
 
             ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Nombre", usuario.RolId);
+            ViewData["Estados"] = new SelectList(new[] {
+                new { Value = true, Text = "Activo" },
+                new { Value = false, Text = "Inactivo" }
+            }, "Value", "Text", usuario.Estado);
             return View(usuario);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Usuario usuario)
+        public async Task<IActionResult> Edit(int id, Usuario usuario, string? nuevaContraseña)
         {
             if (id != usuario.Id) return NotFound();
 
@@ -62,7 +76,21 @@ namespace EventosCostaRica.Controllers
             {
                 try
                 {
-                    _context.Update(usuario);
+                    var usuarioDb = await _context.Usuarios.FindAsync(id);
+                    if (usuarioDb == null) return NotFound();
+
+                    usuarioDb.Nombre = usuario.Nombre;
+                    usuarioDb.Apellidos = usuario.Apellidos;
+                    usuarioDb.Correo = usuario.Correo;
+                    usuarioDb.RolId = usuario.RolId;
+                    usuarioDb.Estado = usuario.Estado;
+
+                    if (!string.IsNullOrWhiteSpace(nuevaContraseña))
+                    {
+                        usuarioDb.ContraseñaHash = SeguridadHelper.HashPassword(nuevaContraseña);
+                    }
+
+                    _context.Update(usuarioDb);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -70,10 +98,14 @@ namespace EventosCostaRica.Controllers
                     if (!_context.Usuarios.Any(u => u.Id == id)) return NotFound();
                     throw;
                 }
-                return RedirectToAction("Seguridad", "Home");
+                return RedirectToAction(nameof(Index));
             }
 
             ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Nombre", usuario.RolId);
+            ViewData["Estados"] = new SelectList(new[] {
+                new { Value = true, Text = "Activo" },
+                new { Value = false, Text = "Inactivo" }
+            }, "Value", "Text", usuario.Estado);
             return View(usuario);
         }
 
@@ -85,7 +117,7 @@ namespace EventosCostaRica.Controllers
 
             _context.Usuarios.Remove(usuario);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Seguridad", "Home");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

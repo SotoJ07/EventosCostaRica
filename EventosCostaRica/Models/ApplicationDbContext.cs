@@ -14,6 +14,8 @@ namespace EventosCostaRica.Models
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Rol> Roles { get; set; }
         public DbSet<Evento> Eventos { get; set; }
+        public DbSet<Entrada> Entradas { get; set; }
+        public DbSet<Asiento> Asientos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,11 +23,12 @@ namespace EventosCostaRica.Models
 
             // Configuración de Usuario
             modelBuilder.Entity<Usuario>().Property(u => u.Nombre).IsRequired().HasMaxLength(100);
+            modelBuilder.Entity<Usuario>().Property(u => u.Apellidos).IsRequired().HasMaxLength(100);
             modelBuilder.Entity<Usuario>().Property(u => u.Correo).IsRequired().HasMaxLength(100);
             modelBuilder.Entity<Usuario>().HasIndex(u => u.Correo).IsUnique();
             modelBuilder.Entity<Usuario>().Property(u => u.ContraseñaHash).IsRequired();
-            modelBuilder.Entity<Usuario>().Property(u => u.Estado).HasDefaultValue(true); // Fix: Use HasDefaultValue instead of HasDefaultValueSql
-            modelBuilder.Entity<Usuario>().Property(u => u.FechaRegistro).HasDefaultValueSql("GETDATE()"); // Ensure the correct SQL Server provider is referenced
+            modelBuilder.Entity<Usuario>().Property(u => u.Estado).HasDefaultValue(true);
+            modelBuilder.Entity<Usuario>().Property(u => u.FechaRegistro).HasDefaultValueSql("GETDATE()");
 
             // Relación Usuario → Rol
             modelBuilder.Entity<Usuario>()
@@ -36,6 +39,12 @@ namespace EventosCostaRica.Models
 
             // Configuración de Rol
             modelBuilder.Entity<Rol>().Property(r => r.Nombre).IsRequired().HasMaxLength(50);
+
+            modelBuilder.Entity<Asiento>()
+        .HasOne(a => a.Entrada)
+        .WithMany(e => e.Asientos)
+        .HasForeignKey(a => a.EntradaId)
+        .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

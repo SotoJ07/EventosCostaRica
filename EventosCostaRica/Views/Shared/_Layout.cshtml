@@ -1,5 +1,6 @@
 ﻿@{
-    var rolUsuario = Context.Session.GetString("Rol");
+    var rolId = Context.Session.GetInt32("RolId");
+    var nombreUsuario = Context.Session.GetString("NombreUsuario");
 }
 
 <!DOCTYPE html>
@@ -27,29 +28,34 @@
 
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav me-auto">
-                        @if (!string.IsNullOrEmpty(rolUsuario))
+                        @if (rolId != null)
                         {
                             <li class="nav-item dropdown">
-                                <span class="navbar-brand fw-bold text-white d-flex align-items-center" style="font-size:1.5rem;">
+                                <a class="nav-link dropdown-toggle fw-bold text-white d-flex align-items-center"
+                                   href="#"
+                                   id="modulesDropdown"
+                                   role="button"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false"
+                                   style="font-size:1.5rem;">
                                     Módulos <i class="bi bi-caret-down-fill ms-1"></i>
-                                </span>
+                                </a>
+
                                 <ul class="dropdown-menu" aria-labelledby="modulesDropdown">
-                                    <li><a class="dropdown-item" href="@Url.Action("Index", "Eventos")">Cartelera de Eventos</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("MisEntradas", "Entradas")">Mis Entradas</a></li>
-                                    @if (rolUsuario == "Admin")
+                                    <li><a class="dropdown-item" href="@Url.Action("Catalogo", "Eventos")">Cartelera de Eventos</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "Entradas")">Mis Entradas</a></li>
+                                    @if (rolId == 1)
                                     {
-                                        <li><a class="dropdown-item" href="@Url.Action("Eventos", "Index")">Gestión de Eventos</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Ventas", "Admin")">Ventas</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Reportes", "Admin")">Reportes</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Seguridad", "Home")">Seguridad y Usuarios</a></li>
-                                    }s
+                                        <li><a class="dropdown-item" href="@Url.Action("Index", "Usuarios")">Gestión de Usuarios</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Index", "Eventos")">Gestión de Eventos</a></li>
+                                    }
                                 </ul>
                             </li>
                         }
                     </ul>
 
                     <ul class="navbar-nav ms-auto">
-                        @if (!User.Identity.IsAuthenticated)
+                        @if (string.IsNullOrEmpty(nombreUsuario))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" href="@Url.Action("Login", "Account")">Iniciar Sesión</a>
@@ -61,7 +67,10 @@
                         else
                         {
                             <li class="nav-item">
-                                <span class="nav-link">Hola, @User.Identity.Name</span>
+                                <span class="nav-link">Hola, @nombreUsuario</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Logout", "Account")">Cerrar Sesión</a>
                             </li>
                         }
                     </ul>

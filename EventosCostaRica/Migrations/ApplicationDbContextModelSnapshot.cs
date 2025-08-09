@@ -22,6 +22,65 @@ namespace EventosCostaRica.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("EventosCostaRica.Models.Asiento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("EntradaId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("EstaOcupado")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("EventoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Fila")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Numero")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntradaId");
+
+                    b.HasIndex("EventoId");
+
+                    b.ToTable("Asientos");
+                });
+
+            modelBuilder.Entity("EventosCostaRica.Models.Entrada", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EventoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaCompra")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventoId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Entradas");
+                });
+
             modelBuilder.Entity("EventosCostaRica.Models.Evento", b =>
                 {
                     b.Property<int>("Id")
@@ -29,6 +88,9 @@ namespace EventosCostaRica.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Capacidad")
+                        .HasColumnType("int");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
@@ -90,7 +152,8 @@ namespace EventosCostaRica.Migrations
 
                     b.Property<string>("Apellidos")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ContraseñaHash")
                         .IsRequired()
@@ -129,6 +192,43 @@ namespace EventosCostaRica.Migrations
                     b.ToTable("Usuarios");
                 });
 
+            modelBuilder.Entity("EventosCostaRica.Models.Asiento", b =>
+                {
+                    b.HasOne("EventosCostaRica.Models.Entrada", "Entrada")
+                        .WithMany("Asientos")
+                        .HasForeignKey("EntradaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("EventosCostaRica.Models.Evento", "Evento")
+                        .WithMany()
+                        .HasForeignKey("EventoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Entrada");
+
+                    b.Navigation("Evento");
+                });
+
+            modelBuilder.Entity("EventosCostaRica.Models.Entrada", b =>
+                {
+                    b.HasOne("EventosCostaRica.Models.Evento", "Evento")
+                        .WithMany()
+                        .HasForeignKey("EventoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EventosCostaRica.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Evento");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("EventosCostaRica.Models.Usuario", b =>
                 {
                     b.HasOne("EventosCostaRica.Models.Rol", "Rol")
@@ -138,6 +238,11 @@ namespace EventosCostaRica.Migrations
                         .IsRequired();
 
                     b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("EventosCostaRica.Models.Entrada", b =>
+                {
+                    b.Navigation("Asientos");
                 });
 
             modelBuilder.Entity("EventosCostaRica.Models.Rol", b =>

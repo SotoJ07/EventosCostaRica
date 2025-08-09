@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Entrada>
+
+<h2 class="mb-4 text-center fw-bold">Mis Entradas</h2>
+
+<div class="row justify-content-center">
+    @foreach (var entrada in Model)
+    {
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="ticket shadow-sm">
+                <div class="ticket-header text-white">
+                    <h4 class="mb-0 fw-bold">@entrada.Evento.Nombre</h4>
+                    <small>@entrada.Evento.Lugar</small>
+                </div>
+                <div class="ticket-body">
+                    <p><strong>Fecha del Evento:</strong> @entrada.Evento.FechaInicio.ToString("dd/MM/yyyy")</p>
+                    <p><strong>Fecha de Compra:</strong> @entrada.FechaCompra.ToString("dd/MM/yyyy")</p>
+                    <p><strong>Asientos:</strong> @string.Join(", ", entrada.Asientos.Select(a => $"{a.Fila}{a.Numero}"))</p>
+                </div>
+                <div class="ticket-footer">
+                    <span>Código: <strong>#@entrada.Id</strong></span>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .ticket {
+        border: 2px dashed #ccc;
+        border-radius: 15px;
+        overflow: hidden;
+        background: white;
+    }
+
+    .ticket-header {
+        background: linear-gradient(135deg, #ff6b6b, #ff9f43);
+        padding: 15px;
+        text-align: center;
+    }
+
+    .ticket-body {
+        padding: 15px;
+        font-size: 0.95rem;
+    }
+
+        .ticket-body p {
+            margin: 5px 0;
+        }
+
+    .ticket-footer {
+        background: #f8f9fa;
+        padding: 10px;
+        font-size: 0.85rem;
+        text-align: center;
+        border-top: 1px dashed #ccc;
+    }
+</style>

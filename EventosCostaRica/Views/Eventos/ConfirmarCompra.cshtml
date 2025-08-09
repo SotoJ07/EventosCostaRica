@@ -1,0 +1,22 @@
+﻿@model ConfirmarCompraViewModel
+
+<h2>Resumen de Compra</h2>
+
+<div class="card p-4">
+    <p><strong>Evento:</strong> @Model.Evento.Nombre</p>
+    <p><strong>Fecha:</strong> @Model.Evento.FechaInicio.ToShortDateString()</p>
+    <p><strong>Usuario:</strong> @Model.UsuarioNombre</p>
+    <p><strong>Correo:</strong> @Model.UsuarioCorreo</p>
+    <p><strong>Asientos seleccionados:</strong> @Model.AsientosResumen</p>
+    <p><strong>Total:</strong> ₡@(Model.Asientos.Count* Model.Evento.Precio)</p>
+
+    <form asp-action="FinalizarCompra" method="post">
+        <input type="hidden" name="eventoId" value="@Model.Evento.Id" />
+        @foreach (var asiento in Model.Asientos)
+        {
+            <input type="hidden" name="asientosSeleccionados" value="@asiento.Id" />
+        }
+
+        <button type="submit" class="btn btn-success">Confirmar Compra</button>
+    </form>
+</div>

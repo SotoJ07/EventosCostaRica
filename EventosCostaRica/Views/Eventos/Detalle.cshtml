@@ -1,0 +1,22 @@
+﻿@model EventosCostaRica.Models.Evento
+
+<div class="card mb-3">
+    <img src="@Url.Content(Model.ImagenUrl)" class="card-img-top" alt="Banner del evento">
+    <div class="card-body">
+        <h3 class="card-title">@Model.Nombre</h3>
+        <p class="card-text">@Model.Descripcion</p>
+        <p><strong>Fecha:</strong> @Model.FechaInicio.ToShortDateString() - @Model.FechaFin.ToShortDateString()</p>
+        <p><strong>Lugar:</strong> @Model.Lugar</p>
+        <p><strong>Precio:</strong> ₡@Model.Precio</p>
+        <p><strong>Disponibilidad:</strong> @(Model.Capacidad > 0 ? "Disponible" : "Agotado")</p>
+
+        @if (Model.Capacidad > 0)
+        {
+            <a href="@Url.Action("Comprar", "Entradas", new { eventoId = Model.Id })" class="btn btn-primary">Comprar Entradas</a>
+        }
+        else
+        {
+            <span class="text-danger">Entradas agotadas</span>
+        }
+    </div>
+</div>

@@ -1,0 +1,46 @@
+﻿@model EventosCostaRica.Models.Usuario
+
+<h2>Crear Usuario</h2>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Nombre"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Apellidos"></label>
+        <input asp-for="Apellidos" class="form-control" />
+        <span asp-validation-for="Apellidos" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Correo"></label>
+        <input asp-for="Correo" class="form-control" />
+        <span asp-validation-for="Correo" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label>Contraseña</label>
+        <input asp-for="ContraseñaHash" type="password" class="form-control" />
+        <span asp-validation-for="ContraseñaHash" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label>Rol</label>
+        <select asp-for="RolId" class="form-control" asp-items="ViewBag.RolId"></select>
+    </div>
+    <div class="mb-3">
+        <label>Estado</label>
+        <select asp-for="Estado" class="form-control" asp-items="ViewBag.Estados"></select>
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

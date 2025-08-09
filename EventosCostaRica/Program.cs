@@ -9,7 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // ? Add Session services
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 // ? Add Authentication services
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -39,7 +44,7 @@ app.UseRouting();
 
 // ? Enable session & auth in the right order
 app.UseSession();
-app.UseAuthentication(); // <-- Add this line
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

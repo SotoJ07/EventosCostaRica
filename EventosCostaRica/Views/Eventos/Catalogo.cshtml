@@ -1,0 +1,43 @@
+﻿@model List<EventosCostaRica.Models.Evento>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewData["Title"] = "Eventos Disponibles";
+}
+
+<h2 class="text-center my-4">Eventos Disponibles</h2>
+
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var evento in Model)
+        {
+            var disponible = evento.Capacidad > 0;
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="@evento.ImagenUrl" class="card-img-top" alt="@evento.Nombre" style="height: 200px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h5 class="card-title">@evento.Nombre</h5>
+                        <p class="card-text"><strong>Fecha:</strong> @evento.FechaInicio.ToString("dd/MM/yyyy")</p>
+                        <p class="card-text"><strong>Lugar:</strong> @evento.Lugar</p>
+                        <p class="card-text"><strong>Precio:</strong> ₡@evento.Precio.ToString("N0")</p>
+                        <p class="card-text"><strong>Capacidad Disponible:</strong> @evento.Capacidad</p>
+                        <span class="badge bg-@(disponible ? "success" : "danger")">
+                            @(disponible ? "Entradas disponibles" : "Entradas agotadas")
+                        </span>
+                    </div>
+                    <div class="card-footer bg-transparent text-center">
+                        @if (disponible)
+                        {
+                            <a href="@Url.Action("SeleccionarAsientos", "Eventos", new { eventoId = evento.Id })" class="btn btn-primary">Comprar</a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary" disabled>Agotado</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

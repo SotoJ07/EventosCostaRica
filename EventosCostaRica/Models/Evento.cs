@@ -25,4 +25,7 @@ public class Evento
     public decimal Precio { get; set; }
 
     public string? ImagenUrl { get; set; }
+
+    [Required]
+    public int Capacidad { get; set; } = 100;
 }

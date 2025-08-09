@@ -1,0 +1,40 @@
+﻿@model IEnumerable<EventosCostaRica.Models.Usuario>
+
+<h2 class="mb-4">Usuarios</h2>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Crear Usuario</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellidos</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Fecha Registro</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nombre</td>
+                <td>@item.Apellidos</td>
+                <td>@item.Correo</td>
+                <td>@item.Rol.Nombre</td>
+                <td>@(item.Estado ? "Activo" : "Inactivo")</td>
+                <td>@item.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                <td>
+                    <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline-block">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este usuario?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
