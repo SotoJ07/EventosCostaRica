@@ -1,0 +1,27 @@
+﻿@model IEnumerable<EventosCostaRica.Models.Guest>
+
+<h2>Guest List</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var guest in Model)
+        {
+            <tr>
+                <td>@guest.Name</td>
+                <td>@guest.LastName</td>
+                <td>@guest.Email</td>
+                <td>@guest.Role</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary" asp-action="Create">Add New Guest</a>

@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using EventosCostaRica.Models;
 using EventosCostaRica.Helpers;
+using System.Threading.Tasks;
+using System.Linq;
+using System;
 
 namespace EventosCostaRica.Controllers
 {
@@ -32,27 +35,61 @@ namespace EventosCostaRica.Controllers
             }, "Value", "Text");
             return View();
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Usuario usuario)
         {
-            if (ModelState.IsValid)
+            // Debug: Log if Password is bound
+            System.Diagnostics.Debug.WriteLine($"Password bound: {(usuario.Password != null ? "YES" : "NO")}");
+
+            if (!ModelState.IsValid)
             {
+                // Log all validation errors
+                var errors = string.Join("; ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                System.Diagnostics.Debug.WriteLine("ModelState errors: " + errors);
+
+                // Repopulate dropdowns
+                ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Nombre", usuario.RolId);
+                ViewData["Estados"] = new SelectList(new[] {
+            new { Value = true, Text = "Activo" },
+            new { Value = false, Text = "Inactivo" }
+        }, "Value", "Text", usuario.Estado);
+
+                return View(usuario);
+            }
+
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Creating Usuario with password: " + usuario.Password);
+
                 usuario.FechaRegistro = DateTime.Now;
-                usuario.ContraseñaHash = SeguridadHelper.HashPassword(usuario.ContraseñaHash);
+
+                // Hash the password before saving
+                usuario.ContraseñaHash = SeguridadHelper.HashPassword(usuario.Password);
+
                 _context.Add(usuario);
                 await _context.SaveChangesAsync();
+
+                System.Diagnostics.Debug.WriteLine("Usuario saved with ID: " + usuario.Id);
+
                 return RedirectToAction(nameof(Index));
             }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Exception saving usuario: " + ex.Message);
+                ModelState.AddModelError("", "Error saving user: " + ex.Message);
+            }
+
+            // Repopulate dropdowns on error
             ViewData["RolId"] = new SelectList(_context.Roles, "Id", "Nombre", usuario.RolId);
             ViewData["Estados"] = new SelectList(new[] {
-                new { Value = true, Text = "Activo" },
-                new { Value = false, Text = "Inactivo" }
-            }, "Value", "Text", usuario.Estado);
+        new { Value = true, Text = "Activo" },
+        new { Value = false, Text = "Inactivo" }
+    }, "Value", "Text", usuario.Estado);
             return View(usuario);
         }
-
         public async Task<IActionResult> Edit(int id)
         {
             var usuario = await _context.Usuarios.FindAsync(id);
