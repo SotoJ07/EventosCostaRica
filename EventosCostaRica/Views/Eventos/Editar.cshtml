@@ -16,16 +16,19 @@
     <div class="form-group mb-2">
         <label asp-for="Lugar"></label>
         <input asp-for="Lugar" class="form-control" />
+        <input type="hidden" asp-for="ImagenUrl" />
     </div>
 
     <div class="row mb-2">
         <div class="col">
             <label asp-for="FechaInicio"></label>
-            <input asp-for="FechaInicio" type="date" class="form-control" />
+            <input asp-for="FechaInicio" type="datetime-local" class="form-control"
+                   value="@Model.FechaInicio.ToString("yyyy-MM-ddTHH:mm")" />
         </div>
         <div class="col">
             <label asp-for="FechaFin"></label>
-            <input asp-for="FechaFin" type="date" class="form-control" />
+            <input asp-for="FechaFin" type="datetime-local" class="form-control"
+                   value="@Model.FechaFin.ToString("yyyy-MM-ddTHH:mm")" />
         </div>
     </div>
 

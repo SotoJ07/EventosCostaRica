@@ -62,11 +62,9 @@ public class EventosController : Controller
         if (!ModelState.IsValid)
             return View(evento);
 
-        // Guardar evento
         _context.Eventos.Add(evento);
         await _context.SaveChangesAsync();
 
-        // Generar asientos asociados al evento
         var filas = new[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
         int columnas = 10;
 
@@ -100,8 +98,16 @@ public class EventosController : Controller
     [HttpPost]
     public async Task<IActionResult> Editar(Evento evento, IFormFile imagen)
     {
-        var original = await _context.Eventos.AsNoTracking().FirstOrDefaultAsync(e => e.Id == evento.Id);
-        if (original == null) return NotFound();
+        var original = await _context.Eventos.FirstOrDefaultAsync(e => e.Id == evento.Id);
+
+        if (original == null)
+            return NotFound();
+
+        if (!ModelState.IsValid)
+        {
+            evento.ImagenUrl = original.ImagenUrl;
+            return View(evento);
+        }
 
         if (imagen != null && imagen.Length > 0)
         {
@@ -113,18 +119,24 @@ public class EventosController : Controller
                 await imagen.CopyToAsync(stream);
             }
 
-            evento.ImagenUrl = "/imagenes/" + nombreArchivo;
+            original.ImagenUrl = "/imagenes/" + nombreArchivo;
         }
         else
         {
-            evento.ImagenUrl = original.ImagenUrl;
+            original.ImagenUrl = evento.ImagenUrl;
         }
 
-        if (!ModelState.IsValid)
-            return View(evento);
+        original.Nombre = evento.Nombre;
+        original.Descripcion = evento.Descripcion;
+        original.Lugar = evento.Lugar;
+        original.FechaInicio = evento.FechaInicio;
+        original.FechaFin = evento.FechaFin;
+        original.Precio = evento.Precio;
 
-        _context.Eventos.Update(evento);
+        
+
         await _context.SaveChangesAsync();
+
         return RedirectToAction(nameof(Index));
     }
 
@@ -138,9 +150,16 @@ public class EventosController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    // Mostrar la vista de selección de asientos
     public async Task<IActionResult> SeleccionarAsientos(int eventoId)
     {
+        var nombreUsuario = HttpContext.Session.GetString("NombreUsuario");
+        var correoUsuario = HttpContext.Session.GetString("CorreoUsuario");
+
+        if (string.IsNullOrEmpty(nombreUsuario) || string.IsNullOrEmpty(correoUsuario))
+        {
+            return RedirectToAction("DebeIniciarSesion", "Home");
+        }
+
         var asientos = await _context.Asientos
             .Where(a => a.EventoId == eventoId)
             .OrderBy(a => a.Fila)
@@ -159,30 +178,6 @@ public class EventosController : Controller
         return View(asientos);
     }
 
-    // Confirmar selección
-    /*[HttpPost]
-    public async Task<IActionResult> ConfirmarAsientos(int eventoId, List<int> asientosSeleccionados)
-    {
-        if (asientosSeleccionados == null || !asientosSeleccionados.Any())
-        {
-            TempData["Error"] = "Debes seleccionar al menos un asiento.";
-            return RedirectToAction("SeleccionarAsientos", new { eventoId });
-        }
-
-        var asientos = await _context.Asientos
-            .Where(a => asientosSeleccionados.Contains(a.Id))
-            .ToListAsync();
-
-        foreach (var asiento in asientos)
-        {
-            asiento.EstaOcupado = true;
-        }
-
-        await _context.SaveChangesAsync();
-
-        TempData["Mensaje"] = "¡Asientos reservados exitosamente!";
-        return RedirectToAction("DetalleEvento", new { id = eventoId });
-    }*/
     [HttpPost]
     public async Task<IActionResult> ConfirmarAsientos(int eventoId, List<int> asientosSeleccionados)
     {
@@ -208,7 +203,7 @@ public class EventosController : Controller
             Evento = evento,
             Asientos = asientos,
             UsuarioNombre = nombreUsuario ?? "Invitado",
-            UsuarioCorreo = correoUsuario ?? "correo@ejemplo.com", // Modifica si usas claims
+            UsuarioCorreo = correoUsuario ?? "correo@ejemplo.com",
         };
 
         return View("ConfirmarCompra", model);

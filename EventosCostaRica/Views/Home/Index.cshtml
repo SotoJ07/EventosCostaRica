@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<EventosCostaRica.Models.Evento>
+
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     ViewData["Title"] = "Eventos Costa Rica - Home";
@@ -22,55 +24,36 @@
                     </p>
                     <div class="d-flex gap-3 animate-fade-in-delay-2">
                         <a href="#tours" class="btn btn-primary btn-lg px-4 py-3 rounded-pill shadow-lg">
-                            <i class="fas fa-map-marked-alt me-2"></i>Explorar Tours
+                            <i class="fas fa-map-marked-alt me-2"></i>Explorar Eventos
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div id="eventCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
-                        <div class="carousel-indicators">
-                            <button type="button" data-bs-target="#eventCarousel" data-bs-slide-to="0" class="active"></button>
-                            <button type="button" data-bs-target="#eventCarousel" data-bs-slide-to="1"></button>
-                            <button type="button" data-bs-target="#eventCarousel" data-bs-slide-to="2"></button>
-                            <button type="button" data-bs-target="#eventCarousel" data-bs-slide-to="3"></button>
-                        </div>
-                        <div class="carousel-inner rounded-4 shadow-lg">
-                            <div class="carousel-item active">
-                                <img src="/imagenes/EventosCostaRicaLogo.png" class="d-block w-100 carousel-img-modern" alt="Eventos Costa Rica Logo">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5 class="fw-bold">Eventos Costa Rica</h5>
-                                    <p>Tu plataforma de eventos favorita</p>
+                    
+
+<div id="carouselEventos" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+                            @foreach (var evento in Model.Select((value, index) => new { value, index }))
+                            {
+                                <div class="carousel-item @(evento.index == 0 ? "active" : "")">
+                                    <img src="@evento.value.ImagenUrl" class="d-block w-100" alt="@evento.value.Nombre">
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h5>@evento.value.Nombre</h5>
+                                        <p>@evento.value.Descripcion</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="carousel-item">
-                                <img src="/imagenes/EventoConciertoKarolG.png" class="d-block w-100 carousel-img-modern" alt="Concierto Karol G">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5 class="fw-bold">Concierto Karol G</h5>
-                                    <p>Los mejores artistas internacionales</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <img src="/imagenes/EventoConciertoRock.png" class="d-block w-100 carousel-img-modern" alt="Concierto Rock">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5 class="fw-bold">Concierto Rock</h5>
-                                    <p>Música en vivo para todos los gustos</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <img src="/imagenes/EventoConciertoYoga.png" class="d-block w-100 carousel-img-modern" alt="Evento Yoga">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5 class="fw-bold">Evento Yoga</h5>
-                                    <p>Bienestar y relajación</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
-                    </div>
+                            }
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselEventos" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselEventos" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+    </button>
+</div>
                 </div>
             </div>
         </div>
@@ -120,147 +103,29 @@
         </div>
     </section>
 
-    <!-- Featured Tours Section -->
-    @model List<EventosCostaRica.Models.Evento>
 
     <!-- Featured Tours Section -->
     <section id="tours" class="py-5 bg-light">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold text-dark mb-3">Tours Destacados</h2>
+                <h2 class="display-5 fw-bold text-dark mb-3">Eventos Destacados</h2>
                 <p class="lead text-muted">Descubre las maravillas de Costa Rica</p>
                 <div class="divider mx-auto"></div>
             </div>
+
             <div class="row g-4">
                 @foreach (var evento in Model)
                 {
-                    var disponible = evento.Capacidad > 0;
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card border-0 shadow-lg h-100 card-hover">
-                            <div class="position-relative overflow-hidden">
-                                @if (!string.IsNullOrEmpty(evento.ImagenUrl))
-                                {
-                                    <img src="@evento.ImagenUrl" class="card-img-top" alt="@evento.Nombre">
-                                }
-                                else
-                                {
-                                    <img src="/imagenes/default-tour.png" class="card-img-top" alt="@evento.Nombre">
-                                }
-                                <div class="card-overlay">
-                                    @{
-                                        string badgeClass = "bg-primary";
-                                        string badgeIcon = "fas fa-map-marker-alt";
-                                        string badgeText = "Tour";
-
-                                        // Lógica para determinar el tipo de badge basado en el lugar o nombre
-                                        if (evento.Lugar.Contains("Corcovado") || evento.Lugar.Contains("OSA"))
-                                        {
-                                            badgeClass = "bg-success";
-                                            badgeIcon = "fas fa-leaf";
-                                            badgeText = "Eco-Tour";
-                                        }
-                                        else if (evento.Lugar.Contains("La Fortuna") || evento.Lugar.Contains("Arenal"))
-                                        {
-                                            badgeClass = "bg-danger";
-                                            badgeIcon = "fas fa-heart";
-                                            badgeText = "Romance";
-                                        }
-                                        else if (evento.Lugar.Contains("Caribe") || evento.Lugar.Contains("Gandoca") || evento.Lugar.Contains("Puerto Viejo"))
-                                        {
-                                            badgeClass = "bg-info";
-                                            badgeIcon = "fas fa-umbrella-beach";
-                                            badgeText = "Relax";
-                                        }
-                                        else if (evento.Lugar.Contains("Playa") || evento.Lugar.Contains("Beach"))
-                                        {
-                                            badgeClass = "bg-info";
-                                            badgeIcon = "fas fa-umbrella-beach";
-                                            badgeText = "Playa";
-                                        }
-                                        else if (evento.Lugar.Contains("Volcán") || evento.Lugar.Contains("Volcano"))
-                                        {
-                                            badgeClass = "bg-warning";
-                                            badgeIcon = "fas fa-mountain";
-                                            badgeText = "Aventura";
-                                        }
-                                    }
-                                    <span class="badge @badgeClass position-absolute top-0 start-0 m-3">
-                                        <i class="@badgeIcon me-1"></i>@badgeText
-                                    </span>
-                                    
-                                    <div class="card-overlay-content">
-                                        <a href="@Url.Action("Catalogo", "Eventos", new { eventoId = evento.Id })" class="btn btn-light btn-sm rounded-pill">
-                                            <i class="fas fa-eye me-1"></i>Ver más
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body p-4">
-                                <h5 class="card-title fw-bold mb-3">@evento.Nombre</h5>
-                                <div class="d-flex align-items-center mb-3 text-muted">
-                                    <i class="fas fa-calendar me-2"></i>
-                                    <span class="me-3">@evento.FechaInicio.ToString("MMM dd")</span>
-                                    <i class="fas fa-clock me-2"></i>
-                                    <span class="me-3">@evento.FechaInicio.ToString("h:mm tt")</span>
-                                    <i class="fas fa-map-marker-alt me-2"></i>
-                                    <span>@evento.Lugar</span>
-                                </div>
-                                @if (!string.IsNullOrEmpty(evento.Descripcion))
-                                {
-                                    <p class="card-text text-muted">@evento.Descripcion</p>
-                                }
-                                else
-                                {
-                                    <p class="card-text text-muted">Disfruta de una experiencia única en @evento.Lugar</p>
-                                }
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="rating">
-                                        @{
-                                            // Generar rating aleatorio basado en el ID del evento para consistencia
-                                            Random rand = new Random(evento.Id);
-                                            double rating = 4.5 + (rand.NextDouble() * 0.5); // Rating entre 4.5 y 5.0
-                                            int fullStars = (int)Math.Floor(rating);
-                                            bool hasHalfStar = (rating - fullStars) >= 0.5;
-                                        }
-
-                                        @for (int i = 0; i < fullStars; i++)
-                                        {
-                                            <i class="fas fa-star text-warning"></i>
-                                        }
-
-                                        @if (hasHalfStar)
-                                        {
-                                            <i class="fas fa-star-half-alt text-warning"></i>
-                                        }
-
-                                        @for (int i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++)
-                                        {
-                                            <i class="far fa-star text-warning"></i>
-                                        }
-
-                                        <small class="text-muted ms-1">(@rating.ToString("F1"))</small>
-                                    </div>
-                                    <span class="h5 text-primary fw-bold mb-0">₡@evento.Precio.ToString("N0")</span>
-                                </div>
-
-                                <div class="mt-3">
-                                    @if (!disponible)
-                                    {
-                                        <span class="availability-badge sold-out">
-                                            <i class="fas fa-times-circle me-1"></i>Entradas Agotadas
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="availability-badge available">
-                                            <i class="fas fa-check-circle me-1"></i>Entradas Disponibles
-                                        </span>
-                                    }
-                                </div>
-                                
-                            </div>
-                            <div class="card-footer bg-white border-0 p-4 pt-0">
-                                <a href="@Url.Action("Catalogo", "Eventos", new { eventoId = evento.Id })" class="btn btn-primary">Comprar</a>
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <img src="@evento.ImagenUrl" class="card-img-top" alt="@evento.Nombre" style="height: 200px; object-fit: cover;">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fw-bold">@evento.Nombre</h5>
+                                <p class="card-text text-muted flex-grow-1">@evento.Descripcion</p>
+                                <a href="@Url.Action("Detalle", "Eventos", new { id = evento.Id })"
+                                   class="btn btn-primary mt-auto">
+                                    Más información
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -341,7 +206,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <h3 class="fw-bold mb-3">¡Mantente informado!</h3>
-                    <p class="lead mb-0">Recibe las últimas noticias sobre eventos y tours exclusivos</p>
+                    <p class="lead mb-0">Recibe las últimas noticias sobre los mejores eventos</p>
                 </div>
                 <div class="col-lg-6">
                     <form class="d-flex gap-2">

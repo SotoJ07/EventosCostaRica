@@ -20,12 +20,14 @@ namespace EventosCostaRica.Controllers
             var nombre = HttpContext.Session.GetString("NombreUsuario");
             ViewBag.NombreUsuario = nombre;
 
-            // Obtener los eventos de la base de datos
-            var eventos = _context.Eventos.ToList();
+            var eventos = _context.Eventos
+                          .Where(e => e.Capacidad > 0)
+                          .OrderBy(e => e.FechaInicio)
+                          .ToList();
 
-            // Pasar los eventos como modelo a la vista
             return View(eventos);
         }
+
 
         public IActionResult Seguridad(string filtro)
         {
@@ -51,6 +53,11 @@ namespace EventosCostaRica.Controllers
 
         [Authorize(Roles = "Admin")]
         public IActionResult EditMainPage()
+        {
+            return View();
+        }
+
+        public IActionResult DebeIniciarSesion()
         {
             return View();
         }
