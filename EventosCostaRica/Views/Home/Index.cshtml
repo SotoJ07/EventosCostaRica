@@ -9,7 +9,6 @@
 }
 <link rel="stylesheet" href="~/css/home-styles.css" />
 <div class="container-fluid p-0">
-    <!-- Modern Hero Section with Gradient -->
     <header class="position-relative overflow-hidden">
         <div class="hero-gradient"></div>
         <div class="container position-relative z-3">
@@ -59,7 +58,6 @@
         </div>
     </header>
 
-    <!-- Stats Section -->
     <section class="py-5 bg-white">
         <div class="container">
             <div class="row text-center">
@@ -104,7 +102,6 @@
     </section>
 
 
-    <!-- Featured Tours Section -->
     <section id="tours" class="py-5 bg-light">
         <div class="container">
             <div class="text-center mb-5">
@@ -143,7 +140,6 @@
         </div>
     </section>
 
-    <!-- Admin Panel (only for Admins) -->
     @if (isAuthenticated && isAdmin)
     {
         <section class="py-5 bg-dark text-white">
@@ -200,7 +196,6 @@
         </section>
     }
 
-    <!-- Newsletter Section -->
     <section class="py-5 bg-primary text-white">
         <div class="container">
             <div class="row align-items-center">

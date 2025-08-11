@@ -118,12 +118,10 @@ namespace EventosCostaRica.Controllers
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 
-            // Log the user in automatically
             HttpContext.Session.SetInt32("UsuarioId", usuario.Id);
             HttpContext.Session.SetString("NombreUsuario", usuario.Nombre);
             HttpContext.Session.SetInt32("RolId", guestRole.Id);
 
-            // Redirigir al Index
             return RedirectToAction("Index", "Home");
         }
 
