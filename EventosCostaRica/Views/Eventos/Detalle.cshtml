@@ -12,7 +12,7 @@
 
         @if (Model.Capacidad > 0)
         {
-            <a href="@Url.Action("Comprar", "Entradas", new { eventoId = Model.Id })" class="btn btn-primary">Comprar Entradas</a>
+            <a href="@Url.Action("SeleccionarAsientos", "Eventos", new { eventoId = Model.Id })" class="btn btn-primary">Comprar Entradas</a>
         }
         else
         {
