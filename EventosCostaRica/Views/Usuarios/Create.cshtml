@@ -5,7 +5,8 @@
 <form asp-action="Create" method="post">
     @Html.AntiForgeryToken()
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <!-- Validation summary added to show server errors -->
+    <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="mb-3">
         <label asp-for="Nombre"></label>
@@ -24,8 +25,8 @@
     </div>
     <div class="mb-3">
         <label>Contraseña</label>
-        <input asp-for="ContraseñaHash" type="password" class="form-control" />
-        <span asp-validation-for="ContraseñaHash" class="text-danger"></span>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label>Rol</label>

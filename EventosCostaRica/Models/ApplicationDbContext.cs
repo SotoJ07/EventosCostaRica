@@ -16,6 +16,8 @@ namespace EventosCostaRica.Models
         public DbSet<Evento> Eventos { get; set; }
         public DbSet<Entrada> Entradas { get; set; }
         public DbSet<Asiento> Asientos { get; set; }
+        public DbSet<Guest> Guests { get; set; } 
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +47,14 @@ namespace EventosCostaRica.Models
         .WithMany(e => e.Asientos)
         .HasForeignKey(a => a.EntradaId)
         .OnDelete(DeleteBehavior.Restrict);
+
+            // Configuración de Guest
+            modelBuilder.Entity<Guest>().Property(g => g.Name).IsRequired().HasMaxLength(100);
+            modelBuilder.Entity<Guest>().Property(g => g.LastName).IsRequired().HasMaxLength(100);
+            modelBuilder.Entity<Guest>().Property(g => g.Email).IsRequired().HasMaxLength(100);
+            modelBuilder.Entity<Guest>().HasIndex(g => g.Email).IsUnique();
+            modelBuilder.Entity<Guest>().Property(g => g.Password).IsRequired();
+            modelBuilder.Entity<Guest>().Property(g => g.Role).HasDefaultValue("Guest");
         }
     }
 }

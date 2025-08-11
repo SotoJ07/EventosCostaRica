@@ -19,7 +19,12 @@ namespace EventosCostaRica.Controllers
         {
             var nombre = HttpContext.Session.GetString("NombreUsuario");
             ViewBag.NombreUsuario = nombre;
-            return View();
+
+            // Obtener los eventos de la base de datos
+            var eventos = _context.Eventos.ToList();
+
+            // Pasar los eventos como modelo a la vista
+            return View(eventos);
         }
 
         public IActionResult Seguridad(string filtro)
